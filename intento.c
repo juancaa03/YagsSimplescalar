@@ -12,7 +12,7 @@
 ../../../../sim-outorder -fastfwd 100000000 -max:inst 100000000 -mem:width 32 -mem:lat 300 2 -bpred yags -bpred:yags 1 64 1 0 -redir:sim ../../../../../out.txt ../../exe/vpr.exe net.in arch.in place.out dum.out -nodisp -place_only -init_t 5 -exit_t 0.005 -alpha_t 0.9412 -inner_num 2
 
 //Eon
-
+../../../../sim-outorder -fastfwd 100000000 -max:inst 100000000 -mem:width 32 -mem:lat 300 2 -bpred yags -bpred:yags 1 64 5 0 ../../exe/eon.exe chair.control.cook chair.camera chair.surfaces chair.cook.ppm ppm pixels_out.cook
 
 //Ammp
 ./../../../../sim-outorder -fastfwd 100000000 -max:inst 100000000 -mem:width 32 -mem:lat 300 2 -bpred yags -bpred:yags 1 64 5 0 -redir:sim ../../../../../out.txt ../../exe/ammp.exe < ammp.in
