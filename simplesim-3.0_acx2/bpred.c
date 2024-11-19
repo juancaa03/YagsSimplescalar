@@ -117,7 +117,6 @@ bpred_create(enum bpred_class class,	/* type of predictor to create */
     }
     pred->dirpred.twolev =
       bpred_dir_create(class, l1size, l2size, shift_width, xor, nt_size, t_size);
-      printf("Yags predictor created!!\n");
     break;
 
   case BPred2bit:
@@ -269,7 +268,7 @@ case BPredYags:   // Yags ------------------------------------------------------
       pred_dir->config.two.shift_width = shift_width;
       
       if (xor != 0)
-  fatal("xor value, '%d', must be 0");
+  fatal("xor value must be 0");
       pred_dir->config.two.xor = xor;
 
       pred_dir->config.two.shiftregs = calloc(l1size, sizeof(int));
@@ -735,7 +734,7 @@ bpred_lookup(struct bpred_t *pred,	/* branch predictor instance */
     if ((MD_OP_FLAGS(op) & (F_CTRL | F_UNCOND)) != (F_CTRL | F_UNCOND)) {
 
       dir_lookup = bpred_dir_lookup(pred->dirpred.twolev, baddr);
-      //printf("YAGS LOOKUP POINTERS: ");
+      
       dir_update_ptr->pdir2 = dir_lookup.p;
 
       unsigned int l1index = (baddr >> MD_BR_SHIFT) & (pred->dirpred.twolev->config.two.l1size - 1);
@@ -744,7 +743,6 @@ bpred_lookup(struct bpred_t *pred,	/* branch predictor instance */
       l2index = l2index & (pred->dirpred.twolev->config.two.l2size - 1);
 
       // Evaluar TakenPHT y NotTakenPHT
-      //unsigned int pc_tag = baddr & 0x3F;
       unsigned int pc_tag = l2index & 0x3F;
       unsigned int prev_t_tag = (*(dir_lookup.p_taken) >> 2) & 0x3F;
       unsigned int prev_nt_tag = (*(dir_lookup.p_nottaken) >> 2) & 0x3F;
@@ -753,15 +751,12 @@ bpred_lookup(struct bpred_t *pred,	/* branch predictor instance */
 
       if (hit_taken) {
         dir_update_ptr->pdir1 = dir_lookup.p_taken;
-        printf("T \n");
       }
       else if (hit_nottaken) {
         dir_update_ptr->pdir1 = dir_lookup.p_nottaken;
-        printf("N \n");
       }
       else {
         dir_update_ptr->pdir1 = dir_lookup.p;                   // Evaluar predicción usando PHT principal
-        printf("Principal \n");
       }
 
     }
@@ -954,10 +949,6 @@ bpred_update(struct bpred_t *pred,	/* branch predictor instance */
         unsigned int tag_with_counter;
         unsigned int counter;
 
-        // prev_tag == pc_tag
-        /*(dir_update_ptr->pdir1 == pred->dirpred.twolev->config.two.taken_table || 
-                dir_update_ptr->pdir1 == pred->dirpred.twolev->config.two.nottaken_table) ANTIGUA CONDICION*/
-        //unsigned int prev_tag = (*(dir_update_ptr->pdir1) >> 2) & 0x3F;
         if ((dir_update_ptr->pdir1 == pred->dirpred.twolev->config.two.taken_table || 
                 dir_update_ptr->pdir1 == pred->dirpred.twolev->config.two.nottaken_table)) {
           // Actualizar contador en la tabla auxiliar (TakenPHT o NotTakenPHT)
@@ -975,7 +966,6 @@ bpred_update(struct bpred_t *pred,	/* branch predictor instance */
           // Reconstruir el valor: 6 bits de tag + contador actualizado
           *(dir_update_ptr->pdir1) = ((tag_with_counter & ~0x3) | counter);
           updated_counter = 1;
-        
         }
 
         // Manejar fallo de predicción en la tabla principal
