@@ -95,6 +95,11 @@ static int twolev_nelt = 4;
 static int twolev_config[4] =
   { /* l1size */1, /* l2size */1024, /* hist */8, /* xor */FALSE};
 
+/* 2-level predictor config (<l1size> <l2size> <hist_size> <xor>) */
+static int yags_nelt = 4;
+static int yags_config[4] =
+  { /* l1size */1, /* l2size */1024, /* hist */5, /* xor */0};
+
 /* combining predictor config (<meta_table_size> */
 static int comb_nelt = 1;
 static int comb_config[1] =
@@ -169,6 +174,13 @@ sim_reg_options(struct opt_odb_t *odb)
                    twolev_config, twolev_nelt, &twolev_nelt,
 		   /* default */twolev_config,
                    /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
+            
+  opt_reg_int_list(odb, "-bpred:yags",
+                   "yags predictor config "
+		   "(<l1size> <l2size> <hist_size> <xor>)",
+                   yags_config, yags_nelt, &yags_nelt,
+		   /* default */yags_config,
+                   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
 
   opt_reg_int_list(odb, "-bpred:comb",
 		   "combining predictor config (<meta_table_size>)",
@@ -242,6 +254,27 @@ sim_check_options(struct opt_odb_t *odb, int argc, char **argv)
 			  /* btb sets */btb_config[0],
 			  /* btb assoc */btb_config[1],
 			  /* ret-addr stack size */ras_size, 0 ,0);
+    }
+  else if (!mystricmp(pred_type, "yags"))
+    {
+      /* 2-level adaptive predictor, bpred_create() checks args */
+      if (yags_nelt != 4)
+	fatal("bad yags pred config (<l1size> <l2size> <hist_size> <xor>)");
+      if (btb_nelt != 2)
+	fatal("bad btb config (<num_sets> <associativity>)");
+
+      pred = bpred_create(BPredYags,
+			  /* bimod table size */0,
+			  /* 2lev l1 size */yags_config[0],
+			  /* 2lev l2 size */yags_config[1],
+			  /* meta table size */0,
+			  /* history reg size */yags_config[2],
+			  /* history xor address */yags_config[3],
+			  /* btb sets */btb_config[0],
+			  /* btb assoc */btb_config[1],
+			  /* ret-addr stack size */ras_size,
+        /* not taken size*/0,
+        /* taken size*/0);
     }
   else if (!mystricmp(pred_type, "comb"))
     {
