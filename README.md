@@ -1,5 +1,5 @@
-# Practica2AC
-## FASE 2
+# Predictor Yags
+## Modificación del simulador simplescalar para implementar Yags como nuevo predictor de salto
 ### TO-DO
 * [Modificar bpred.h](#bpredh)
 * [Modificar bpred.c](#bpredc)
