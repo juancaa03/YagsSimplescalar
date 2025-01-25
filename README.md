@@ -1,6 +1,6 @@
 # Predictor Yags
 ## Modificación del simulador simplescalar para implementar Yags como nuevo predictor de salto
-### TO-DO
+### Algunas de las Modificaciones
 * [Modificar bpred.h](#bpredh)
 * [Modificar bpred.c](#bpredc)
 * [Modificar sim-outorder.c](#sim-outorderc)
